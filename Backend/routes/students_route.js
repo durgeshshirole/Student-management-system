@@ -1,99 +1,95 @@
 const router = require('express').Router();
 const Student = require('../models/student');
-let student = require('../models/student');
+const { verifyToken, isTeacher, isStudent } = require('../middleware/authMiddleware');
 
-//http//localhost:8070/student/add
-router.route('/add').post((req, res) => {
-  const name = req.body.name;
-  const nim = Number(req.body.nim);
-  const gender = req.body.gender;
+// Add a student (Teacher Only)
+router.route('/add').post(verifyToken, isTeacher, (req, res) => {
+  const { name, nim, gender, contactNumber, address, marks, attendance } = req.body;
 
-  //send this object through model to mongodb to store it in the database
-  const newStudent = new student({
+  const newStudent = new Student({
     name,
     nim,
     gender,
+    contactNumber,
+    address,
+    marks,
+    attendance,
   });
 
   newStudent
     .save()
-    .then(() => {
-      res.json('Student Added Successfully');
-    })
-    .catch((err) => console.log(err.message));
+    .then(() => res.status(201).json('Student Added Successfully'))
+    .catch((err) =>
+      res.status(500).json({ error: 'Error adding student', details: err.message })
+    );
 });
 
-//https//localhost:8070/get/student/
-router.route('/get').get((req, res) => {
-  student
-    .find()
-    .then((students) => {
-      res.json(students);
-    })
-    .catch((err) => console.log(err.message));
+// Get all students (Teacher Only)
+router.route('/get').get(verifyToken, isTeacher, (req, res) => {
+  Student.find()
+    .then((students) => res.status(200).json(students))
+    .catch((err) =>
+      res.status(500).json({ error: 'Error fetching students', details: err.message })
+    );
 });
 
-//https//localhost:8070/student/update/:sid
-router.route('/update/:sid').put(async (req, res) => {
-  let userID = req.params.sid;
-  const { name, nim, gender } = req.body;
+// Get own data (Student Only)
+router.route('/get/own').get(verifyToken, isStudent, (req, res) => {
+  const studentId = req.user.id; // Assuming JWT contains student ID
 
-  const updateStudent = {
-    name,
-    nim,
-    gender,
-  };
-
-  const update = await Student.findByIdAndUpdate(userID, updateStudent)
-    .then(() => {
-      res.status(200).send({
-        status: 'User Updated',
-      });
+  Student.findById(studentId)
+    .then((student) => {
+      if (!student) return res.status(404).json({ status: 'Student Not Found' });
+      res.status(200).json(student);
     })
-    .catch((err) => {
-      console.log(err.message);
-      res.status(500).send({
-        status: 'Server Error with updating data',
-        error: err.message,
-      });
-    });
+    .catch((err) =>
+      res.status(500).json({ error: 'Error fetching student data', details: err.message })
+    );
 });
 
-//https//localhost:8070/student/delete/:sid
-router.route('/delete/:sid').delete(async (req, res) => {
-  let uId = req.params.sid;
-  await Student.findByIdAndDelete(uId)
-    .then(() => {
-      res.status(200).send({
-        status: 'user Deleted',
-      });
-    })
-    .catch((err) => {
-      console.log(err.message);
-      res.status(500).send({
-        status: 'Error with deleting user',
-        error: err.message,
-      });
-    });
+// Update student (Teacher Only)
+router.route('/update/:sid').put(verifyToken, isTeacher, async (req, res) => {
+  const studentID = req.params.sid;
+  const { name, nim, gender, contactNumber, address, marks, attendance } = req.body;
+
+  const updateStudent = { name, nim, gender, contactNumber, address, marks, attendance };
+
+  await Student.findByIdAndUpdate(studentID, updateStudent, { new: true })
+    .then((updatedStudent) => res.status(200).json(updatedStudent))
+    .catch((err) =>
+      res.status(500).json({ error: 'Error updating student', details: err.message })
+    );
 });
 
-//https//localhost:8070/student/get/:sid
-router.route('/get/:sid').get(async (req, res) => {
-  const uID = req.params.sid;
-  const user = await Student.findById(uID)
-    .then((user) => {
-      res.status(200).send({
-        status: 'User Fetched',
-        user,
-      });
-    })
-    .catch((err) => {
-      console.log(err.message);
-      res.status(500).send({
-        status: 'Error with fetch user',
-        error: err.message,
-      });
-    });
+// Delete student (Teacher Only)
+router.route('/delete/:sid').delete(verifyToken, isTeacher, async (req, res) => {
+  const studentID = req.params.sid;
+
+  await Student.findByIdAndDelete(studentID)
+    .then(() => res.status(200).json({ status: 'Student Deleted Successfully' }))
+    .catch((err) =>
+      res.status(500).json({ error: 'Error deleting student', details: err.message })
+    );
+});
+
+// Messaging: Student to Teacher
+router.route('/message').post(verifyToken, isStudent, (req, res) => {
+  const { teacherId, message } = req.body;
+
+  
+  res.status(200).json({ status: 'Message sent to teacher', teacherId, message });
+});
+
+// Bulk Add Students (Teacher Only)
+router.route('/bulk-add').post(verifyToken, isTeacher, async (req, res) => {
+  const { students } = req.body; // Expect an array of student objects
+
+  try {
+    await Student.insertMany(students);
+    res.status(201).json('Students added successfully');
+  } catch (err) {
+    res.status(500).json({ error: 'Error adding students in bulk', details: err.message });
+  }
 });
 
 module.exports = router;

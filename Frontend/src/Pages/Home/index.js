@@ -6,16 +6,15 @@ import { FaRegEdit } from 'react-icons/fa'
 import { BsTrash3 } from 'react-icons/bs'
 import NoStudent from "../../Components/NoStudent";
 
-
 export default function Home() {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState([]); // Initialize students as an empty array
 
   useEffect(() => {
     const getStudents = () => {
       axios
         .get("https://sttiss-api.vercel.app/student/get")
         .then((res) => {
-          setStudents(res.data);
+          setStudents(res.data); // Set the students data
         })
         .catch((err) => alert(err.message));
     };
@@ -37,7 +36,7 @@ export default function Home() {
           .delete(`https://sttiss-api.vercel.app/student/delete/${id}`)
           .then((res) => {
             Swal.fire("Deleted!", res.data.status, "success");
-            //update table after deleting
+            // Update table after deleting
             const updatedStudents = students.filter(
               (student) => student._id !== id
             );
@@ -52,17 +51,19 @@ export default function Home() {
 
   return (
     <div className="text-center mb-4">
-      <h5 style={{ textAlign: "center", padding: "3rem" }}>Students Attendance Sekolah Tinggi Teknologi Informatika Sony Sugema</h5>
+      <h5 style={{ textAlign: "center", padding: "3rem" }}>
+        JSCOE STUDENT MANAGEMENT SYSTEM
+      </h5>
       <Link to="/add-student">
         <div className="col-4">
           <button className="btn btn-primary" type="submit">
             Add Student
           </button>
         </div>
-      </Link > 
+      </Link>
       <div className="container">
-        {students.length > 0 ? (
-          <table className="table ">
+        {students && students.length > 0 ? (
+          <table className="table">
             <thead>
               <tr>
                 <th scope="col"></th>
@@ -72,9 +73,9 @@ export default function Home() {
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            {students.map((item, count = 0) => (
-              <tbody>
-                <tr>
+            <tbody>
+              {students.map((item, count = 0) => (
+                <tr key={item._id}>
                   <td style={{ color: "red" }}>{count + 1}</td>
                   <td>{item.name}</td>
                   <td>{item.nim}</td>
@@ -93,8 +94,8 @@ export default function Home() {
                     </button>
                   </td>
                 </tr>
-              </tbody>
-            ))}
+              ))}
+            </tbody>
           </table>
         ) : (
           <NoStudent />

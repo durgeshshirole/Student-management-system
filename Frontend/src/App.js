@@ -6,6 +6,8 @@ import Home from "./Pages/Home";
 import ShowOne from "./Components/ShowOne";
 import Footer from "./Components/Footer";
 import NotFound from "./Components/NotFound";
+import Login from './Pages/Login/Login.js';  // Corrected path
+import Signup from './Pages/Signup/Signup';  // Corrected path
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path="*" exact Component={NotFound} />
           <Route path="/add-student" exact Component={AddStudent} />
           <Route path="/get/:id" exact Component={ShowOne} />
+          <Route path="/login" exact Component={Login} /> {/* Login route */}
+          <Route path="/signup" exact Component={Signup} /> {/* Signup route */}
         </Routes>
       </Router>
 

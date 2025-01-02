@@ -27,6 +27,7 @@
 .App-link {
   color: #61dafb;
 }
+
 .countClass {
   color: green;
 }
@@ -38,4 +39,102 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Custom Table Styling */
+.table th, .table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.table td {
+  padding: 10px;
+}
+
+/* Add Styling for Contact Number, Address, and Marks */
+.table .contact-column, .table .address-column {
+  word-wrap: break-word; /* Ensure long contact info or address doesn't overflow */
+  max-width: 150px;
+}
+
+.table .marks-column {
+  text-align: left; /* Marks are typically aligned to the left */
+}
+
+.table .attendance-column {
+  color: #28a745; /* Green color for attendance percentage */
+}
+
+button.btn {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+button.btn-primary, button.btn-danger {
+  margin-right: 5px;
+}
+
+button.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+button.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+button.btn:hover, button.btn-danger:hover {
+  opacity: 0.8;
+}
+
+/* Styling for Action Buttons (Edit and Delete) */
+button.btn-primary, button.btn-danger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Adjust for Responsiveness */
+@media (max-width: 768px) {
+  .table th, .table td {
+    font-size: 12px;
+  }
+  
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Add Custom Styling for Form Inputs (for additional fields) */
+input, select {
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+/* Add Styling for Address Fields */
+.address-column {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Styling for the Attendance Column */
+.attendance-column {
+  color: #28a745; /* Green color for attendance percentage */
+}
+
+/* For No Student Case */
+.no-student {
+  font-size: 1.5rem;
+  color: #ff6347;
+  text-align: center;
 }

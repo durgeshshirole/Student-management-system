@@ -1,95 +1,183 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const ShowOne = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
-  const [user, setUser] = useState({});
+  const navigate = useNavigate();
+  const [user, setUser] = useState({
+    name: "",
+    nim: "",
+    gender: "",
+    contactNumber: "",
+    address: { street: "", city: "", state: "", zip: "" },
+    marks: [],
+    attendance: "",
+  });
 
   useEffect(() => {
-    const getUser = () => {
-      axios.get(`https://sttiss-api.vercel.app/student/get/${id}`).then((res) => {
-        setUser(res.data.user);
-      });
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`https://sttiss-api.vercel.app/student/get/${id}`);
+        const fetchedUser = response.data.user || {};
+        setUser({
+          ...fetchedUser,
+          marks: fetchedUser.marks || [],
+        });
+      } catch (error) {
+        Swal.fire("Error", "Failed to fetch user details.", "error");
+      }
     };
-    getUser();
+
+    fetchUser();
   }, [id]);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+  const handleInputChange = (field, value) => {
+    setUser({ ...user, [field]: value });
+  };
+
+  const handleAddressChange = (field, value) => {
+    setUser({ ...user, address: { ...user.address, [field]: value } });
+  };
+
+  const handleMarksChange = (index, field, value) => {
+    const updatedMarks = [...user.marks];
+    updatedMarks[index][field] = value;
+    setUser({ ...user, marks: updatedMarks });
+  };
+
+  const addMarkField = () => {
     setUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      marks: [...prevUser.marks, { subject: "", score: "" }],
     }));
   };
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    axios
-      .put(`https://sttiss-api.vercel.app/student/update/${id}`, user)
-      .then(() => {
-        Swal.fire({
-          title: "Do you want to save the changes?",
-          showDenyButton: true,
-          showCancelButton: true,
-          confirmButtonText: "Save",
-          denyButtonText: `Don't save`,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire("Saved!", "", "success");
-            navigate("/");
-          } else if (result.isDenied) {
-            Swal.fire("Changes are not saved", "", "info");
-          }
-        });
-      })
-      .catch((err) => Swal.fire("Not Updated", err.message, "error"));
+  const removeMarkField = (index) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      marks: prevUser.marks.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`https://sttiss-api.vercel.app/student/update/${id}`, user);
+      Swal.fire("Success", "User details updated successfully.", "success");
+      navigate("/");
+    } catch (error) {
+      Swal.fire("Error", "Failed to update user details.", "error");
+    }
   };
 
   return (
-    <div className="container p-5">
-      <form>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
+    <div>
+      <h1>Edit Student</h1>
+      <form onSubmit={handleFormSubmit}>
+        {/* General Details */}
+        <div>
+          <label>Name</label>
           <input
             type="text"
-            className="form-control"
-            id="name"
-            name="name"
-            value={user.name}
-            onChange={handleInputChange}
+            value={user.name || ""}
+            onChange={(e) => handleInputChange("name", e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="nim">Nim</label>
+        <div>
+          <label>NIM</label>
           <input
             type="text"
-            className="form-control"
-            id="nim"
-            name="nim"
-            value={user.nim}
-            onChange={handleInputChange}
+            value={user.nim || ""}
+            onChange={(e) => handleInputChange("nim", e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="gender">Gender</label>
+        <div>
+          <label>Gender</label>
           <select
-            className="form-control"
-            id="gender"
-            name="gender"
-            value={user.gender}
-            onChange={handleInputChange}
+            value={user.gender || ""}
+            onChange={(e) => handleInputChange("gender", e.target.value)}
           >
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
           </select>
         </div>
-        <br />
-        <button onClick={handleFormSubmit} className="btn btn-primary">
-          Submit
-        </button>
+        <div>
+          <label>Contact Number</label>
+          <input
+            type="text"
+            value={user.contactNumber || ""}
+            onChange={(e) => handleInputChange("contactNumber", e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Attendance</label>
+          <input
+            type="number"
+            value={user.attendance || ""}
+            onChange={(e) => handleInputChange("attendance", e.target.value)}
+          />
+        </div>
+
+        {/* Address Section */}
+        <div>
+          <label>Address</label>
+          <input
+            type="text"
+            placeholder="Street"
+            value={user.address.street || ""}
+            onChange={(e) => handleAddressChange("street", e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="City"
+            value={user.address.city || ""}
+            onChange={(e) => handleAddressChange("city", e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="State"
+            value={user.address.state || ""}
+            onChange={(e) => handleAddressChange("state", e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Zip"
+            value={user.address.zip || ""}
+            onChange={(e) => handleAddressChange("zip", e.target.value)}
+          />
+        </div>
+
+        {/* Marks Section */}
+        <div>
+          <label>Marks</label>
+          {user.marks.map((mark, index) => (
+            <div key={index}>
+              <input
+                type="text"
+                placeholder="Subject"
+                value={mark.subject || ""}
+                onChange={(e) => handleMarksChange(index, "subject", e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Score"
+                value={mark.score || ""}
+                onChange={(e) => handleMarksChange(index, "score", e.target.value)}
+              />
+              <button type="button" onClick={() => removeMarkField(index)}>
+                Remove
+              </button>
+            </div>
+          ))}
+          <button type="button" onClick={addMarkField}>
+            Add Mark
+          </button>
+        </div>
+
+        <button type="submit">Save</button>
       </form>
     </div>
   );
