@@ -4,11 +4,11 @@ const { verifyToken, isTeacher, isStudent } = require('../middleware/authMiddlew
 
 // Add a student (Teacher Only)
 router.route('/add').post(verifyToken, isTeacher, (req, res) => {
-  const { name, nim, gender, contactNumber, address, marks, attendance } = req.body;
+  const { name, sid, gender, contactNumber, address, marks, attendance } = req.body;
 
   const newStudent = new Student({
     name,
-    nim,
+    sid,
     gender,
     contactNumber,
     address,
@@ -50,9 +50,9 @@ router.route('/get/own').get(verifyToken, isStudent, (req, res) => {
 // Update student (Teacher Only)
 router.route('/update/:sid').put(verifyToken, isTeacher, async (req, res) => {
   const studentID = req.params.sid;
-  const { name, nim, gender, contactNumber, address, marks, attendance } = req.body;
+  const { name, sid, gender, contactNumber, address, marks, attendance } = req.body;
 
-  const updateStudent = { name, nim, gender, contactNumber, address, marks, attendance };
+  const updateStudent = { name, sid, gender, contactNumber, address, marks, attendance };
 
   await Student.findByIdAndUpdate(studentID, updateStudent, { new: true })
     .then((updatedStudent) => res.status(200).json(updatedStudent))

@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const teacherSchema = new mongoose.Schema({
+  tid:{
+    type:String,
+    required:true
+  },
   name: {
     type: String,
     required: true,
@@ -14,6 +18,16 @@ const teacherSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  contact:{
+    type:Number,
+    required:true,
+    validate: {
+      validator: function (v) {
+          return /^\d{10}$/.test(v.toString()); // Convert to string for regex validation
+      },
+      message: (props) => "Enter a valid number!",
+  }},
+    
   role: {
     type: String,
     enum: ['Teacher'],

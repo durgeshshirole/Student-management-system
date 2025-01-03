@@ -28,12 +28,13 @@ router.get('/:id', verifyToken, async (req, res) => {
 
 // Add a new teacher
 router.post('/', verifyToken, async (req, res) => {
-  const { name, email, password, subject } = req.body;
+  const { name, email, password,contact, subject } = req.body;
 
   const newTeacher = new Teacher({
     name,
     email,
     password,  // Ensure password is hashed before saving (implement hashing in the actual code)
+    contact,
     subject,
   });
 

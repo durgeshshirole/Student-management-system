@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema({
+  sid:{
+    type:String,
+    required:true
+  },
   name: {
     type: String,
     required: true,
@@ -43,13 +47,13 @@ const studentSchema = new mongoose.Schema({
     type: Number,
     default: 100,
   },
-  messages: [
-    {
-      toTeacher: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' },
-      content: { type: String, required: true },
-      date: { type: Date, default: Date.now },
-    },
-  ],
+  // messages: [
+  //   {
+  //     toTeacher: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' },
+  //     content: { type: String, required: true },
+  //     date: { type: Date, default: Date.now },
+  //   },
+  // ],
 });
 
 const Student = mongoose.model('Student', studentSchema);

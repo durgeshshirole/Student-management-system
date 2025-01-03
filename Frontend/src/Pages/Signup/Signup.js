@@ -19,7 +19,7 @@ function Signup() {
 
     try {
       // Sending request to backend to create a new user
-      await axios.post("https://your-backend-url/signup", {
+      await axios.post("http://localhost:8070/signup", {
         name,
         email,
         password,

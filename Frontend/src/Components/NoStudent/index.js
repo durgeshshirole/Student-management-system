@@ -11,7 +11,7 @@ const NoStudent = () => (
         <img
             className="img-fluid bounce-animation "
             src={logo}
-            alt="Logo STTISS"
+            alt="Logo"
             style={{ width: "15rem", padding: "2rem" }}
         />
     </div>

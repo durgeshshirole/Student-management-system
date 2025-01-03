@@ -16,7 +16,7 @@ function CounterFunction() {
 
   return (
     <div>
-      <h2 className="countClass">Function Base Approch</h2>
+      <h2 className="countClass">Function Base Approach</h2>
       <h2>Number : {number}</h2>
       <button onClick={increament}>+</button>{" "}
       <button onClick={decrement}>-</button>{" "}

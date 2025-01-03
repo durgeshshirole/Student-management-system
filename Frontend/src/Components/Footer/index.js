@@ -6,7 +6,7 @@ const Footer = () => {
             <footer className="text-sm text-center">
                 <div className="d-flex flex-column flex-md-row justify-content-center">
                     <p className="m-5">
-                        Copyright &copy; {new Date().getFullYear()}, STTISS. Designed & Developed by Gilbert Hutapea
+                       Student Management System for JSCOE Pune
                     </p>
                 </div>
             </footer>

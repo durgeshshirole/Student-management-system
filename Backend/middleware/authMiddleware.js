@@ -9,7 +9,7 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);//|| 'your-secret-key');
     req.user = decoded; // Save decoded token data (e.g., userType and userId) to `req.user`
     next();
   } catch (err) {

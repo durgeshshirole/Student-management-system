@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user'); 
 
 const router = express.Router();
-const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key'; // Secret key for JWT token
+const SECRET_KEY = process.env.JWT_SECRET;// || 'your-secret-key'; // Secret key for JWT token
 
 // Signup route
 // POST: /auth/signup
@@ -15,7 +15,7 @@ router.post('/signup', async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'User already exists!' });
     }
 
     // Validate userType
@@ -51,13 +51,13 @@ router.post('/login', async (req, res) => {
     // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'Invalid username!' });
     }
 
     // Compare the provided password with the stored hashed password
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid password!' });
     }
 
     // Generate a JWT token

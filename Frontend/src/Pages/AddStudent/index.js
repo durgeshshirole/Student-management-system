@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 export default function AddStudent() {
   const [name, setName] = useState("");
-  const [nim, setNim] = useState("");
+  const [sid, setSid] = useState("");
   const [gender, setGender] = useState("");
   const [contactNumber, setContactNumber] = useState("");
-  const [address, setAddress] = useState({ street: "", city: "", state: "", zip: "" });
+  const [address, setAddress] = useState({ city: "", state: "", zip: "" });
   const [marks, setMarks] = useState([{ subject: "", score: 0 }]);
   const [attendance, setAttendance] = useState(100);
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ export default function AddStudent() {
   // Validate form inputs
   const validateForm = () => {
     if (!name.trim()) return "Name is required.";
-    if (!nim || isNaN(nim)) return "Valid NIM is required.";
+    if (!sid || isNaN(sid)) return "Valid Sid is required.";
     if (!gender) return "Gender is required.";
     if (!contactNumber.trim()) return "Contact number is required.";
     if (contactNumber.length !== 10) return "Contact number must be 10 digits.";
@@ -58,7 +58,7 @@ export default function AddStudent() {
 
     const newStudent = {
       name,
-      nim,
+      sid,
       gender,
       contactNumber,
       address,
@@ -118,8 +118,8 @@ export default function AddStudent() {
             className="form-control"
             id="nim"
             placeholder="Enter your student ID"
-            value={nim}
-            onChange={(e) => setNim(e.target.value)}
+            value={sid}
+            onChange={(e) => setSid(e.target.value)}
           />
         </div>
         <div>

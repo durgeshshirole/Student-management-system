@@ -17,7 +17,7 @@ mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const connection = mongoose.connection;
 connection.once('open', () => {
-  console.log('Mongodb Connection Success!');
+  console.log(`Mongodb Connection at ${process.env.MONGODB_URL} Success!`);
 });
 
 // Import routes
